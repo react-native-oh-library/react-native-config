@@ -1,9 +1,4 @@
-'use strict';
+import { TurboModuleRegistry } from 'react-native';
 
-// Bridge to:
-// Android: buildConfigField vars set in build.gradle, and exported via ReactConfig
-// iOS: config vars set in xcconfig and exposed via RNCConfig.m
-import { NativeModules } from 'react-native';
-
-export const Config = NativeModules.RNCConfigModule || {}
+const Config = TurboModuleRegistry.get('ConfigNativeModule').getConstants();
 export default Config;
