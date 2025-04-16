@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 function loadEnvFileToMap(fileName: string): Map<string, string> {
+  console.log(`loadEnvFileToMap:fileName=${fileName}`)
   if (fs.existsSync(fileName)) {
     const envFilePath = path.resolve(__dirname, fileName);
     const envFileContent = fs.readFileSync(envFilePath, 'utf8');
@@ -54,19 +55,19 @@ export function defineBuildConfig() {
           const appContext = node.getContext(OhosPluginId.OHOS_APP_PLUGIN) as OhosAppContext;
           const buildMode =  appContext.getBuildMode()
           const extParams = hvigor.getParameter().getExtParams();
-          let configFile = ".env"
-          try{
-            configFile = appContext.getBuildProfileOpt().app.products[0].buildOption.arkOptions.buildProfileFields[buildMode]
-          }catch{
-            console.log('buildProfileFields is not find buildMode');
-          }
-          if (process.env.ENVFILE) {
+          const buildProfileEnvFile = appContext.getBuildProfileOpt()?.app?.products[0]?.buildOption?.arkOptions?.buildProfileFields[`env_file_${buildMode}`];
+          let configFile;
+          if(process.env.ENVFILE) {
             configFile = process.env.ENVFILE;
+            console.log(`configFile=${configFile}, from process.env.ENVFILE`);
+          } else if (buildProfileEnvFile) {
+            configFile = buildProfileEnvFile;
+            console.log(`configFile=${configFile}, from buildProfileFields[env_file_${buildMode}]`);
+          } else {
+            configFile = ".env"
+            console.log(`configFile=${configFile}, from default`);
           }
-          console.log(configFile);
-          console.log(conPath + '\\' + configFile);
-
-          generateConfigClass(loadEnvFileToMap(conPath + '\\' + configFile));
+          generateConfigClass(loadEnvFileToMap(conPath + path.sep + configFile));
         },
 
         dependencies: ['default@PreBuild'],
