@@ -55,14 +55,14 @@ export function defineBuildConfig() {
           const appContext = node.getContext(OhosPluginId.OHOS_APP_PLUGIN) as OhosAppContext;
           const buildMode =  appContext.getBuildMode()
           const extParams = hvigor.getParameter().getExtParams();
-          const buildProfileEnvFile = appContext.getBuildProfileOpt()?.app?.products[0]?.buildOption?.arkOptions?.buildProfileFields[`env_file_${buildMode}`];
+          const buildProfileEnvFile = appContext.getBuildProfileOpt()?.app?.products[0]?.buildOption?.arkOptions?.buildProfileFields[`${buildMode}`];
           let configFile;
           if(process.env.ENVFILE) {
             configFile = process.env.ENVFILE;
             console.log(`configFile=${configFile}, from process.env.ENVFILE`);
           } else if (buildProfileEnvFile) {
             configFile = buildProfileEnvFile;
-            console.log(`configFile=${configFile}, from buildProfileFields[env_file_${buildMode}]`);
+            console.log(`configFile=${configFile}, from buildProfileFields[${buildMode}]`);
           } else {
             configFile = ".env"
             console.log(`configFile=${configFile}, from default`);
